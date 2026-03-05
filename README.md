@@ -1,100 +1,120 @@
-# Claude Code Telemetry Analytics Platform
 
-This project is an end-to-end analytics platform for processing Claude
-Code telemetry data. It ingests raw telemetry logs, stores them in a
-structured SQLite database, and exposes interactive insights through a
-Streamlit dashboard.
+Claude Code Telemetry Analytics Platform
 
-------------------------------------------------------------------------
+This project is an end-to-end analytics platform for processing Claude Code telemetry data.
+It ingests raw telemetry logs, stores them in a structured SQLite database, and exposes interactive insights through both a Streamlit dashboard and REST API.
 
-## What the project does
+------------------------------------------------------------
 
--   **ETL ingestion**
-    -   Loads employee metadata from `output/employees.csv`
-    -   Parses JSONL telemetry logs from `output/telemetry_logs.jsonl`
-    -   Extracts important attributes such as timestamp, event type,
-        model, tokens, cost, tool usage and duration
-    -   Inserts structured data into a SQLite database
--   **Analytics**
-    -   Token usage trends over time
-    -   Event distribution by type
-    -   Model cost comparison
-    -   Token usage by practice/team
-    -   Tool usage patterns
-    -   Peak usage heatmap (day of week × hour)
--   **Dashboard**
-    -   Interactive Streamlit dashboard
-    -   Filters by practice and date range
-    -   Multiple visualizations for telemetry insights
+WHAT THE PROJECT DOES
 
-------------------------------------------------------------------------
+ETL ingestion
+- Loads employee metadata from output/employees.csv
+- Parses JSONL telemetry logs from output/telemetry_logs.jsonl
+- Extracts attributes such as timestamp, event type, model, tokens, cost, tool usage and duration
+- Inserts structured data into a SQLite database
 
-## Requirements
+Analytics
+The platform generates several analytics insights:
+- Token usage trends over time
+- Event distribution by type
+- Model cost comparison
+- Token usage by practice/team
+- Tool usage patterns
+- Peak usage heatmap (day of week × hour)
 
--   Python 3.11+ recommended
--   Virtual environment
+Dashboard
+An interactive dashboard built with Streamlit provides:
+- Filtering by practice/team
+- Filtering by date range
+- Multiple visualizations for telemetry insights
+- Exploration of usage patterns
 
-------------------------------------------------------------------------
+API (Bonus Feature)
+A REST API built with FastAPI provides programmatic access to analytics data.
 
-## Setup
+Example endpoints:
+GET /health
+GET /stats/summary
+GET /stats/events-by-type
+GET /stats/tokens-by-day
+GET /stats/cost-by-model
 
-### 1. Create a virtual environment
+API documentation:
+http://127.0.0.1:8000/docs
 
-Windows (PowerShell):
+------------------------------------------------------------
 
-python -m venv .venv ..venv`\Scripts`{=tex}`\Activate`{=tex}.ps1
+REQUIREMENTS
 
-------------------------------------------------------------------------
+Python 3.11+
+Virtual environment recommended
 
-### 2. Install dependencies
+------------------------------------------------------------
+
+SETUP
+
+Create virtual environment (Windows PowerShell)
+
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+Install dependencies
 
 pip install -r requirements.txt
 
 If dependencies change:
 
-pip freeze \> requirements.txt
+pip freeze > requirements.txt
 
-------------------------------------------------------------------------
+------------------------------------------------------------
 
-## Run the pipeline
+RUN THE PIPELINE
 
-### 1. Initialize the database
+Initialize the database
 
-This creates the SQLite database and applies the schema.
+python src/db/init_db.py
 
-python .`\src`{=tex}`\db`{=tex}`\init`{=tex}\_db.py
+Ingest telemetry data
 
-------------------------------------------------------------------------
-
-### 2. Ingest telemetry data
-
-Loads employees and telemetry events into the database.
-
-python .`\src`{=tex}`\etl`{=tex}`\ingest`{=tex}.py
+python src/etl/ingest.py
 
 Example output:
 
-Inserted/updated employees: `<N>`{=html} Inserted events: `<N>`{=html}
-\| Skipped: `<N>`{=html}
+Inserted/updated employees: <N>
+Inserted events: <N> | Skipped: <N>
 
-=== SANITY CHECK === Employees: `<N>`{=html} Events: `<N>`{=html}
+=== SANITY CHECK ===
+Employees: <N>
+Events: <N>
 
-------------------------------------------------------------------------
+------------------------------------------------------------
 
-## Run the dashboard
+RUN THE DASHBOARD
 
-streamlit run .`\src`{=tex}`\dashboard`{=tex}`\app`{=tex}.py
+streamlit run src/dashboard/app.py
 
 Then open the URL printed in the terminal (for example):
 
 http://localhost:8504
 
-------------------------------------------------------------------------
+------------------------------------------------------------
 
-## Technologies
+RUN THE API (BONUS)
 
--   Python
--   SQLite
--   Pandas
--   Streamlit
--   Matplotlib
+python -m uvicorn src.api.main:app --reload
+
+Open API documentation:
+
+http://127.0.0.1:8000/docs
+
+------------------------------------------------------------
+
+TECHNOLOGIES
+
+Python
+SQLite
+Pandas
+Streamlit
+Matplotlib
+FastAPI
